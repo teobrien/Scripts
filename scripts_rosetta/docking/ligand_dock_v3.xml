@@ -1,0 +1,43 @@
+<ROSETTASCRIPTS>
+      <SCOREFXNS>
+                <myscore weights=talaris2013_enzdes.wts/> 
+      </SCOREFXNS>
+      <SCORINGGRIDS ligand_chain=C width=16.0>
+		<dock_grid grid_type=ClassicGrid weight=1.0/>
+      </SCORINGGRIDS>
+      <TASKOPERATIONS>
+                <DetectProteinLigandInterface name=interface_detect design=0 cut1=10.0 cut2=12.0 cut3=14.0 cut4=16.0/>
+                <LimitAromaChi2 name=limchi2/>
+                <SetCatalyticResPackBehavior name=catres fix_catalytic_aa=0/>
+                <ProteinLigandInterfaceUpweighter name=up interface_weight=1.5/>
+		<RestrictResidueToRepacking name=ppi resnum=533/>
+      </TASKOPERATIONS>
+      <FILTERS>
+                <EnzScore name="allcst" score_type=cstE scorefxn=myscore whole_pose=1 energy_cutoff=2000/> 
+                <LigInterfaceEnergy name="interfE" scorefxn=myscore energy_cutoff=2000/> filter on the energy across the interface
+               <DSasa name="lig_sasa" lower_threshold=0.0 upper_threshold=1.0 />
+        </FILTERS>
+      <MOVERS>
+              <AddOrRemoveMatchCsts name=cstadd cst_instruction=add_new/> 
+	      VirtualRoot name=vr />
+
+             <StartFrom name=start_from chain=C>
+             	<Coordinates x=111.584 y=39.218 z=46.427/>
+             </StartFrom>
+
+	     <Transform name=predock chain=C box_size=20 move_distance=10 angle=360 cycles=1000 repeats=3 temperature=5/>
+             <EnzRepackMinimize name=repack_wbb design=0 repack_only=1 scorefxn_minimize=myscore scorefxn_repack=myscore minimize_rb=1 rb_min_jumps=2  minimize_sc=1 minimize_bb=1 cycles=3 minimize_lig=1 min_in_stages=0 backrub=0 task_operations=interface_detect,limchi2,catres/>
+             <EnzRepackMinimize name=cstopt cst_opt=1 minimize_rb=1 minimize_sc=1 minimize_bb=0 cycles=1 min_in_stages=0 minimize_lig=1 rb_min_jumps=2/>
+      </MOVERS>
+      <PROTOCOLS>
+              Add mover=vr/>
+              <Add mover_name=cstadd/>
+              <Add mover=start_from/>
+              <Add mover=predock/>
+              <Add mover=cstopt/>
+              <Add mover=repack_wbb/>
+	      <Add filter_name=allcst/>
+              <Add filter_name=interfE/>
+              <Add filter_name=lig_sasa/>
+      </PROTOCOLS>
+</ROSETTASCRIPTS>

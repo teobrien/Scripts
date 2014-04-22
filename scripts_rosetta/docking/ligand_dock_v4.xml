@@ -47,4 +47,4 @@
 	      <Add filter_name=allcst/>
               <Add filter_name=lig_sasa/>
       </PROTOCOLS>
-</ROSETTASCRIPTS
+</ROSETTASCRIPTS>
